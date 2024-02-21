@@ -107,6 +107,7 @@ export default function ModelContainer({
   };
 
   const handleColorClick = () => {
+  
     if (showColorContainer) setActiveState(0);
 
     setShowColorContainer((prevShow) => !prevShow);

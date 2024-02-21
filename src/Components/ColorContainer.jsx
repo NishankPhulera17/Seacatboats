@@ -68,6 +68,7 @@ function ColorContainer({ show, modelParts, colorOptions }) {
                   fontSize: "15px",
                 }}
                 onClick={() => {
+                 
                   setColors(
                     {
                       part: modelParts[activeIndex],

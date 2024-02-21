@@ -13,6 +13,8 @@ import { captureScreenshot } from "../../functions";
 import { pdf } from "@react-pdf/renderer";
 import PDFDocument from "../PDFDoucment";
 import { colorOptions } from "../../Constants/seacat";
+import { useStore } from "zustand";
+import { TenMpOutlined } from "@mui/icons-material";
 
 const defaultUser = {
   firstName: "",
@@ -62,6 +64,7 @@ const Menu = ({ variants, selectedModel, setSelectedModel,initiallySelected, set
   const handleImageSelect = (image) => {
     setSelectedImage(image);
   };
+  
   // Handle zip code input change
   const handleZipCodeChange = (event) => {
     const { name, value } = event.target;
@@ -210,93 +213,42 @@ const Menu = ({ variants, selectedModel, setSelectedModel,initiallySelected, set
   const handleSubmit = async () => {
     setIsSubmitting(true);
     await getPdfData();
-    const colorData = getColorName('Exterior Rail')
+    const colorData = getColorName('#5897B8')
 
-    const templateParams = {
-      to_name: 'Shobhit Titus',
-      user: userForm.email,
-      dealer: userForm.selectedDealer || '',
-      // firstName: userForm.firstName,
-      // lastName: userForm.lastName,
-      // phone: userForm.phone,
-      // email: userForm.email,
-      // address: userForm.address,
-      // streetAddress: userForm.streetAddress,
-      // city: userForm.city,
-      // state: userForm.state,
-      // postalZip: userForm.postalZip,
-      // country: userForm.country,
-      hullName: selectedOptions['Select your Hull (single select)']?.option,
-      hullPrice: selectedOptions['Select your Hull (single select)']?.price,
-      engineName: selectedOptions['Engine options (single select)']?.option,
-      enginePrice: selectedOptions['Engine options (single select)']?.price,
-      trailerName: selectedOptions['Trailer options (single select)']?.option,
-      trailerPrice: selectedOptions['Trailer options (single select)']?.price,
-      // hullColor: colors['Hull Color'],
-      // powerPoles: colors['Power Poles'],
-      // polingPlatform: colors['Poling Platform'],
-      // accessories: selectedOptions['Accessories (multi-select)']
-      //   ?.map((item, index) => `(${index + 1}) ${item}`)
-      //   .join('     '),
-      // additionalOptions: selectedOptions['Additional options (multi-select)']
-      //   ?.map((item, index) => `(${index + 1}) ${item}`)
-      //   .join('     '),
-      // grabBarOptions: selectedOptions['Grab bar options (multi-select)']
-      //   ?.map((item, index) => `(${index + 1}) ${item}`)
-      //   .join('     '),
-      // polingPlatformOptions: selectedOptions[
-      //   'Poling platform options (multi-select)'
-      // ]
-      //   ?.map((item, index) => `(${index + 1}) ${item}`)
-      //   .join('     '),
-      // steeringKits: selectedOptions['Steering kits (multi-select)']
-      //   ?.map((item, index) => `(${index + 1}) ${item}`)
-      //   .join('     '),
-      // trimOptions: selectedOptions['Trim options (multi-select)']
-      //   ?.map((item, index) => `(${index + 1}) ${item}`)
-      //   .join('     '),
-      // message_html: JSON.stringify({
-      //   colors: colors,
-      // }),
-      firstName: userForm.firstName,
-      lastName: userForm.lastName,
-      phone: userForm.phone,
-      email: userForm.email,
-      address: userForm.address,
-      streetAddress: userForm.streetAddress,
-      city: userForm.city,
-      state: userForm.state,
-      postalZip: userForm.postalZip,
-      country: userForm.country,
-      primaryColor:getColorName( colors["Primary Fence"]),
-      secondaryColor: getColorName(colors["Secondary Fence"]),
-      exteriorColor: getColorName(colors["Exterior Rail"]),
-      interiorColor: getColorName(colors["Interior Options"]),
-  accessories: selectedOptions['Accessories (multi-select)']
-        ?.map((item, index) => `(${index + 1}) ${item}`)
-        .join('     '),
-      additionalOptions: selectedOptions['Additional options (multi-select)']
-        ?.map((item, index) => `(${index + 1}) ${item}`)
-        .join('     '),
-      grabBarOptions: selectedOptions['Grab bar options (multi-select)']
-        ?.map((item, index) => `(${index + 1}) ${item}`)
-        .join('     '),
-      polingPlatformOptions: selectedOptions[
-        'Poling platform options (multi-select)'
-      ]
-        ?.map((item, index) => `(${index + 1}) ${item}`)
-        .join('     '),
-      steeringKits: selectedOptions['Steering kits (multi-select)']
-        ?.map((item, index) => `(${index + 1}) ${item}`)
-        .join('     '),
-      trimOptions: selectedOptions['Trim options (multi-select)']
-        ?.map((item, index) => `(${index + 1}) ${item}`)
-        .join('     '),
-      message_html: JSON.stringify({
-        colors: colors,
-      }),
-      //attachment: pdfData,
+
+
+    var templateParams = {
+      "to_name": 'Shobhit Titus',
+      "user": userForm.email,
+      "dealer": userForm.selectedDealer || '',
+      "firstName": userForm.firstName,
+      "lastName": userForm.lastName,
+      "phone": userForm.phone,
+      "email": userForm.email,
+      "address": userForm.address,
+      "streetAddress": userForm.streetAddress,
+      "city": userForm.city,
+      "state": userForm.state,
+      "postalZip": userForm.postalZip,
+      "country": userForm.country,
+      "sea_cat_hull_color":getColorName(colors["Sea Cat Hull"])
+      // primaryColor:getColorName( colors["Primary Fence"]),
+      // secondaryColor: getColorName(colors["Secondary Fence"]),
+      // exteriorColor: getColorName(colors["Exterior Rail"]),
+      // interiorColor: getColorName(colors["Interior Options"]),
+  
+      
     };
+    const selectedOptionsForm = selectedOptions["Standard Options (multi-select)"]
+    let additionalOptions = ""
+    for(var i =0;i<selectedOptionsForm.length;i++)
+    {
+       additionalOptions = selectedOptionsForm.join('\n');
+    }
+    templateParams["additionalOptions"] = additionalOptions
+
+    
+    
 
     //26 Jan changes start
     // Generate the PDF
@@ -324,29 +276,31 @@ const Menu = ({ variants, selectedModel, setSelectedModel,initiallySelected, set
 
     // if (requiredColors.every((color) => colors[color])) {
     if (requiredUserFields.every((field) => userForm[field])) {
-      try {
-        reader.onloadend = async () => {
-          const base64data = reader.result;
-          templateParams.attachment = base64data;
+      // try {
+      //   reader.onloadend = async () => {
+      //     const base64data = reader.result;
+      //     templateParams.attachment = base64data;
           try {
             await emailjs.send(
-              'serviceID',
-              'templateID',
+              'default_service',
+              'template_55qzaql',
               templateParams,
-              'userID-mGzdAsNC7y'
+              'YSzEnVrRbMS2a86t1'
             );
             alert('Form submitted successfully');
             setUserForm(defaultUser);;
           } catch (error) {
-            console.log(error);
+            console.log("Error in sending email",error);
           } finally {
             setIsSubmitting(false);
           }
-        };
-      } catch (error) {
-        console.error('Error submitting form:', error);
-        alert('Error submitting form. Please try again.');
-      }
+      //   };
+      // } catch (error) {
+      //   console.error('Error submitting form:', error);
+      //   alert('Error submitting form. Please try again.');
+      // }
+      
+      
     } else {
       const missingFields = requiredUserFields.filter(
         (field) => !userForm[field]
@@ -413,6 +367,7 @@ const Menu = ({ variants, selectedModel, setSelectedModel,initiallySelected, set
               setOptions(variants[e.target.value].options);
               updateSelectionModel(e.target.value);
               updateSelection(variants[e.target.value].initialOptions);
+             
             }}
             sx={{ height: 40, width: "100%", mb: 2 }}
             MenuProps={{
