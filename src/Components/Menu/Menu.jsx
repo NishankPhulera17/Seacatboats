@@ -632,9 +632,9 @@ const Menu = ({ variants, selectedModel, setSelectedModel,initiallySelected, set
                 minLength={5}
               />
             </div>
-            <div className="form-field">
+            {/* <div className="form-field">
               <label>Dealers</label>
-              {/* {filteredDealers.length > 0 ? ( */}
+              
               <div>
                 {dealers.length > 0 ? (
                   dealers.map((dealer, index) => (
@@ -697,10 +697,8 @@ const Menu = ({ variants, selectedModel, setSelectedModel,initiallySelected, set
                   </span>
                 )}
               </div>
-              {/* ) : (
-                <span>No Dealers near you</span>
-              )} */}
-            </div>
+              
+            </div> */}
 
             <div className="form-field">
               <label htmlFor="country">Country</label>
